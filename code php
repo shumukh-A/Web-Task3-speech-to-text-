@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech to Text</title>
+    <style>
+        body {
+            background-color: #ffcdd2; /* Light pink background color */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Set the height of the body to the full viewport height */
+            margin: 0; /* Remove default margin */
+        }
+        
+        #speech-form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        textarea {
+            width: 500px; /* Adjust the width of the textarea as needed */
+        }
+    </style>
+    <script>
+        function startRecording() {
+            var recognition = new (window.SpeechRecognition ||
+            window.webkitSpeechRecognition)();
+            var selectedLanguage = document.getElementById('language').value;
+            recognition.lang = selectedLanguage;
+            recognition.interimResults = false;
+            recognition.onresult = function(event) {
+                var transcript = event.results[0][0].transcript;
+                document.getElementById('text-content').value = transcript;
+            };
+            recognition.onerror = function(event) {
+                console.error(event.error);
+            };
+            recognition.start();
+        }
+        
+        function saveText() {
+            document.getElementById('speech-form').submit();
+        }
+    </script>
+</head>
+<body>
+    <h1>Speech to Text</h1>
+    <div id="speech-form">
+        <label for="language">Select Language:</label>
+        <select id="language">
+            <option value="en-US">English</option>
+            <option value="ar-SA">Arabic</option>
+        </select><br><br>
+        <button onclick="startRecording()">Start Recording</button>
+        <form action="save_text.php" method="post">
+            <textarea id="text-content" name="text-content" rows="10" cols="50" readonly></textarea><br>
+            <button type="button" onclick="saveText()">Save Text</button>
+        </form>
+    </div>
+</body>
+</html>
